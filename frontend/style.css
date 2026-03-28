@@ -95,3 +95,100 @@
       margin-bottom: 0.8rem;
     }
 
+   /* ── MAIN ── */
+
+     main {
+      padding: 0 2rem;
+    }
+
+    main .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2.5rem 0;
+    }
+/* MAP SECTION */
+
+    .map-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .map-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--ink-soft);
+      letter-spacing: 0.05em;
+    }
+      /* ── LEGEND ── */
+        .legend {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+     .legend-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 3px;
+  background-color: var(--gold);  /* available background */
+  padding: 2px;
+}
+
+.legend-icon-booked {
+  background-color: var(--stone);
+  opacity: 0.6;
+}
+
+
+     .legend-icon.cabana-avail { background: var(--gold); }
+    .legend-icon.cabana-booked { background: var(--stone); opacity: 0.6; }
+    .legend-icon.pool { background: var(--water-light); }
+    .legend-icon.path { background: var(--path); opacity: 0.3;}
+    .legend-icon.chalet { background: var(--chalet); opacity: 0.8;}
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone);
+      font-weight: 700;
+    }
+

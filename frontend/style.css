@@ -1,0 +1,194 @@
+:root {
+      --sand: #f5efe6;
+      --sand-dark: #e8ddd0;
+      --palm: #2d5016;
+      --palm-light: #4a7c28;
+      --water: #3a8fa3;
+      --water-light: #5ab8d0;
+      --water-dark: #1d6577;
+      --gold: #c9973a;
+      --gold-light: #e8b85a;
+      --stone: #8b7355;
+      --chalk: #faf7f2;
+      --ink: #1a1410;
+      --ink-soft: #3d3428;
+      --cabana-avail: #e8b85a;
+      --cabana-booked: #8b7355;
+      --path: #c4b49a;
+      --pool: #3a8fa3;
+      --chalet: #8b7355;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--sand);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Subtle noise texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+         /* ── HEADER ── */
+    header {
+      background: var(--chalk);
+      border-bottom: 1px solid var(--sand-dark);
+      padding: 0 2rem;
+    }
+
+     header .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      padding: 2rem 0 1.5rem;
+    }
+    .resort-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+    }
+
+    .resort-tagline {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--stone);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .header-right {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .date-display {
+      font-size: 0.7rem;
+      color: var(--stone);
+      letter-spacing: 0.1em;
+    }
+
+     /* States */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    .idle-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--stone);
+      line-height: 1.6;
+      margin-bottom: 0.8rem;
+    }
+
+   /* ── MAIN ── */
+
+     main {
+      padding: 0 2rem;
+    }
+
+    main .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2.5rem 0;
+    }
+/* MAP SECTION */
+
+    .map-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .map-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--ink-soft);
+      letter-spacing: 0.05em;
+    }
+      /* ── LEGEND ── */
+        .legend {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+     .legend-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 3px;
+  background-color: var(--gold);  /* available background */
+  padding: 2px;
+}
+
+.legend-icon-booked {
+  background-color: var(--stone);
+  opacity: 0.6;
+}
+
+
+     .legend-icon.cabana-avail { background: var(--gold); }
+    .legend-icon.cabana-booked { background: var(--stone); opacity: 0.6; }
+    .legend-icon.pool { background: var(--water-light); }
+    .legend-icon.path { background: var(--path); opacity: 0.3;}
+    .legend-icon.chalet { background: var(--chalet); opacity: 0.8;}
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+    }
+
+    .stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone);
+      font-weight: 700;
+    }
+

@@ -31,6 +31,60 @@
         </div>
     </header>
 
+    <!-- Main -->
+    <main>
+        <div class="container">
+            <section class="map-header">
+                <div class="map-title">Resort Map — click a cabana to book</div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <img src="assets/cabana.png" alt="Available Cabana" class="legend-icon cabana-avail" />
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <img src="assets/cabana.png" alt="Booked Cabana" class="legend-icon cabana-booked" />
+                        <span>Booked</span>
+                    </div>
+                    <div class="legend-item">
+                        <img src="assets/textureWater.png" alt="Pool" class="legend-icon pool" />
+                        <span>Pool</span>
+                    </div>
+                    <div class="legend-item">
+                        <img src="assets/arrowStraight.png" alt="Path" class="legend-icon path" />
+                        <span>Path</span>
+                    </div>
+                    <div class="legend-item">
+                        <img src="assets/houseChimney.png" alt="Chalet" class=" legend-icon chalet" />
+                        <span>Chalet</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-val" id="stat-total">—</div>
+                    <div class="stat-label">Total Cabanas</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-val" id="stat-avail">—</div>
+                    <div class="stat-label">Available</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-val" id="stat-booked">—</div>
+                    <div class="stat-label">Reserved</div>
+                </div>
+            </div>
+
+            <div id="map-container">
+                <div id="map-grid"></div>
+                <div id="pool-overlay">
+                    <img src="assets/pool.png" alt="Pool" id="pool-overlay-img" />
+                </div>
+            </div>
+
+        </div>
+    </main>
+
 </body>
 
 </html>

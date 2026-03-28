@@ -81,3 +81,17 @@
       color: var(--stone);
       letter-spacing: 0.1em;
     }
+
+     /* States */
+    .state { display: none; }
+    .state.active { display: block; }
+
+    .idle-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--stone);
+      line-height: 1.6;
+      margin-bottom: 0.8rem;
+    }
+

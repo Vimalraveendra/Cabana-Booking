@@ -84,6 +84,57 @@ const createApp = (options = {}) => {
     res.json({ grid, cabanas: cabanaWithStatus });
   });
 
+  // POST  /api/book---book a cabana---
+
+  app.post("/api/book", (req, res) => {
+    const { cabanaId, roomNumber, guestName } = req.body;
+
+    if (!cabanaId || !roomNumber || !guestName) {
+      return res
+        .status(400)
+        .json({ error: "cabanaId,roomNumber and guestName are required." });
+    }
+
+    //Validate cabana exists
+    if (!cabanaState.hasOwnProperty(cabanaId)) {
+      return res
+        .status(404)
+        .json({ error: `Cabana not found with id: ${cabanaId}` });
+    }
+
+    // check cabana availability
+    if (cabanaState[cabanaId] !== null) {
+      return res.status(409).json({ error: "This cabana is already booked." });
+    }
+
+    //Validate guest
+    const guest = guests.find(
+      (g) =>
+        g.roomNumber.trim().toLowerCase() === roomNumber.trim().toLowerCase() &&
+        g.guestName.trim().toLowerCase() === guestName.trim().toLowerCase(),
+    );
+
+    if (!guest) {
+      res.status(401).json({
+        error:
+          "No guest found with that room number and name.Please check your details.",
+      });
+    }
+
+    // Book cabana
+    cabanaState[cabanaId] = {
+      roomNumber: guest.roomNumber,
+      guestName: guest.guestName,
+      bookedAt: new Date().toISOString(),
+    };
+
+    res.json({
+      success: true,
+      message: `Cabana booked successfully for ${guest.guestName} (Room ${guest.roomNumber}).`,
+      booking: cabanaState[cabanaId],
+    });
+  });
+
   return app;
 };
 

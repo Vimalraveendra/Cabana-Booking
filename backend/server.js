@@ -35,7 +35,7 @@ const createApp = (options = {}) => {
     process.exit(1);
   }
 
-  // Load bookings/guests---
+  // ---Load bookings/guests---
 
   let guests = [];
   try {
@@ -70,6 +70,19 @@ const createApp = (options = {}) => {
   }
 
   //---API Routes---
+
+  //  GET /api/map — returns the map grid and cabana availability
+  app.get("/api/map", (req, res) => {
+    const grid = mapLines.map((line) => line.split(""));
+    const cabanaWithStatus = cabanas.map(({ id, row, col }) => ({
+      id,
+      row,
+      col,
+      available: cabanaState[id] === null,
+      booking: cabanaState[id] || null,
+    }));
+    res.json({ grid, cabanas: cabanaWithStatus });
+  });
 
   return app;
 };

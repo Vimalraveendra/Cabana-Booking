@@ -61,5 +61,24 @@ const createApp = (options = {}) => {
   };
   const cabanas = parseCabanas(mapLines);
 
+  //---In-memory cabana booking state---
+  //Map from cabanaId->booking info or null
+
+  const cabanaState = {};
+  for (const c of cabanas) {
+    cabanaState[c.id] = null;
+  }
+
+  //---API Routes---
+
   return app;
 };
+
+//Only start server when run directly
+if (require.main === module) {
+  const app = createApp();
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`🌴 Cabana Booking Server running at http://localhost:${PORT}`);
+  });
+}

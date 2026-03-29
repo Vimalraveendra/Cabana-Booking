@@ -40,13 +40,13 @@
       opacity: 0.4;
     }
          /* ── HEADER ── */
-    header {
+    .header {
       background: var(--chalk);
       border-bottom: 1px solid var(--sand-dark);
       padding: 0 2rem;
     }
 
-     header .container {
+     .header .container {
       max-width: 1440px;
       margin: 0 auto;
       display: flex;
@@ -54,7 +54,7 @@
       gap: 1.5rem;
       padding: 2rem 0 1.5rem;
     }
-    .resort-name {
+    .header__name {
       font-family: 'Cormorant Garamond', serif;
       font-size: 2.2rem;
       font-weight: 300;
@@ -63,7 +63,7 @@
       letter-spacing: 0.02em;
     }
 
-    .resort-tagline {
+    .header__tagline {
       font-family: 'DM Mono', monospace;
       font-size: 0.65rem;
       color: var(--stone);
@@ -71,22 +71,22 @@
       text-transform: uppercase;
     }
 
-    .header-right {
+    .header__right {
       margin-left: auto;
       text-align: right;
     }
 
-    .date-display {
+    .header__date {
       font-size: 0.7rem;
       color: var(--stone);
       letter-spacing: 0.1em;
     }
 
-     /* States */
+     /* States
     .state { display: none; }
-    .state.active { display: block; }
+    .state.active { display: block; } */
 
-    .idle-text {
+    .header__text {
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
       font-size: 1.05rem;
@@ -97,11 +97,11 @@
 
    /* ── MAIN ── */
 
-     main {
+     .main {
       padding: 0 2rem;
     }
 
-    main .container {
+    .main .container {
       max-width: 1440px;
       margin: 0 auto;
       padding: 2.5rem 0;
@@ -117,7 +117,7 @@
       gap: 1rem;
     }
 
-    .map-title {
+    .map-header__title {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.1rem;
       font-weight: 400;
@@ -125,14 +125,14 @@
       letter-spacing: 0.05em;
     }
       /* ── LEGEND ── */
-        .legend {
+       .map-header__legend {
       display: flex;
       gap: 1.2rem;
       align-items: center;
       flex-wrap: wrap;
     }
 
-    .legend-item {
+    .legend__item {
       display: flex;
       align-items: center;
       gap: 0.4rem;
@@ -142,7 +142,7 @@
       color: var(--stone);
     }
 
-     .legend-icon {
+ .legend__icon {
   width: 20px;
   height: 20px;
   object-fit: contain;
@@ -151,32 +151,31 @@
   padding: 2px;
 }
 
-.legend-icon-booked {
+.legend__icon--booked {
   background-color: var(--stone);
   opacity: 0.6;
 }
 
-
-     .legend-icon.cabana-avail { background: var(--gold); }
-    .legend-icon.cabana-booked { background: var(--stone); opacity: 0.6; }
-    .legend-icon.pool { background: var(--water-light); }
-    .legend-icon.path { background: var(--path); opacity: 0.3;}
-    .legend-icon.chalet { background: var(--chalet); opacity: 0.8;}
+     .legend__icon--available { background: var(--gold); }
+    .legend__icon--booked { background: var(--stone); opacity: 0.6; }
+    .legend__icon--pool { background: var(--water-light); }
+    .legend__icon--path { background: var(--path); opacity: 0.3;}
+    .legend__icon--chalet { background: var(--chalet); opacity: 0.8;}
 
     /* ── STATS BAR ── */
-    .stats-bar {
+    .stats {
       display: flex;
       gap: 2rem;
       margin-bottom: 1.5rem;
     }
 
-    .stat {
+    .stats__item {
       display: flex;
       align-items: baseline;
       gap: 0.5rem;
     }
 
-    .stat-val {
+    .stats__value {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.8rem;
       font-weight: 300;
@@ -184,7 +183,7 @@
       line-height: 1;
     }
 
-    .stat-label {
+    .stats__label {
       font-size: 0.62rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;

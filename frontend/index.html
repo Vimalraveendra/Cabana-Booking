@@ -13,65 +13,64 @@
 </head>
 
 <body>
-
     <!-- Header -->
 
-    <header>
+    <header class="header">
         <div class="container">
             <div>
-                <div class="resort-name">Soleil Palms</div>
-                <div class="resort-tagline"><span>🌴</span>Poolside Cabana Reservations</div>
+                <div class="header__name">Soleil Palms</div>
+                <div class="header__tagline"><span>🌴</span>Poolside Cabana Reservations</div>
             </div>
-            <div class="header-right">
-                <div class="date-display" id="date-display"></div>
-                <div class="state active" id="state-idle">
-                    <div class="idle-text">Choose your perfect poolside retreat from the map.</div>
-                </div>
+            <div class="header__right">
+                <div class="header__date" id="header-date"></div>
+                <div class="header__text">Choose your perfect poolside retreat from the map.</div>
             </div>
         </div>
     </header>
 
     <!-- Main -->
-    <main>
+    <main class="main">
         <div class="container">
             <section class="map-header">
-                <div class="map-title">Resort Map — click a cabana to book</div>
-                <div class="legend">
-                    <div class="legend-item">
-                        <img src="assets/cabana.png" alt="Available Cabana" class="legend-icon cabana-avail" />
+                <div class="map-header__title">Resort Map — click a cabana to book</div>
+                <div class="map-header__legend">
+                    <div class="legend__item">
+                        <img src="assets/cabana.png" alt="Available Cabana"
+                            class="legend__icon legend__icon--available" />
                         <span>Available</span>
                     </div>
-                    <div class="legend-item">
-                        <img src="assets/cabana.png" alt="Booked Cabana" class="legend-icon cabana-booked" />
+                    <div class="legend__item">
+                        <img src="assets/cabana.png" alt="Booked Cabana" class="legend__icon legend__icon--booked" />
                         <span>Booked</span>
                     </div>
-                    <div class="legend-item">
-                        <img src="assets/textureWater.png" alt="Pool" class="legend-icon pool" />
+                    <div class="legend__item">
+                        <img src="assets/textureWater.png" alt="Pool" class="legend__icon legend__icon--pool" />
                         <span>Pool</span>
                     </div>
-                    <div class="legend-item">
-                        <img src="assets/arrowStraight.png" alt="Path" class="legend-icon path" />
+                    <div class="legend__item">
+                        <img src="assets/arrowStraight.png" alt="Path" class="legend__icon legend__icon--path" />
                         <span>Path</span>
                     </div>
-                    <div class="legend-item">
-                        <img src="assets/houseChimney.png" alt="Chalet" class=" legend-icon chalet" />
+                    <div class="legend__item">
+                        <img src="assets/houseChimney.png" alt="Chalet" class=" legend__icon legend__icon--chalet" />
                         <span>Chalet</span>
                     </div>
                 </div>
             </section>
 
-            <div class="stats-bar">
-                <div class="stat">
-                    <div class="stat-val" id="stat-total">—</div>
-                    <div class="stat-label">Total Cabanas</div>
+            <!-- Stats -->
+            <div class="stats" id="stats">
+                <div class="stats__item">
+                    <div class="stats__value" id="stats-total">—</div>
+                    <div class="stats__label">Total Cabanas</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-val" id="stat-avail">—</div>
-                    <div class="stat-label">Available</div>
+                <div class="stats__item">
+                    <div class="stats__value" id="stats-available">—</div>
+                    <div class="stats__label">Available</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-val" id="stat-booked">—</div>
-                    <div class="stat-label">Reserved</div>
+                <div class="stats__item">
+                    <div class="stats__value" id="stats-booked">—</div>
+                    <div class="stats__label">Reserved</div>
                 </div>
             </div>
 

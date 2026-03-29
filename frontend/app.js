@@ -2,6 +2,73 @@ const API = ""; // same origin
 let mapData = null;
 let selectedCabanaId = null;
 
+// ── LEGEND (dynamic) ──
+
+const LEGEND_ITEMS = [
+  {
+    src: "assets/cabana.png",
+    alt: "Available Cabana",
+    modifier: "available",
+    label: "Available",
+  },
+  {
+    src: "assets/cabana.png",
+    alt: "Booked Cabana",
+    modifier: "booked",
+    label: "Booked",
+  },
+  {
+    src: "assets/textureWater.png",
+    alt: "Pool",
+    modifier: "pool",
+    label: "Pool",
+  },
+  {
+    src: "assets/arrowStraight.png",
+    alt: "Path",
+    modifier: "path",
+    label: "Path",
+  },
+  {
+    src: "assets/houseChimney.png",
+    alt: "Chalet",
+    modifier: "chalet",
+    label: "Chalet",
+  },
+];
+
+function renderLegend() {
+  const legend = document.getElementById("legend");
+  legend.innerHTML = LEGEND_ITEMS.map(
+    ({ src, alt, modifier, label }) => `
+    <div class="legend__item">
+      <img src="${src}" alt="${alt}" class="legend__icon legend__icon--${modifier}" />
+      <span>${label}</span>
+    </div>
+  `,
+  ).join("");
+}
+
+// ── STATS (dynamic)──
+
+const STAT_ITEMS = [
+  { id: "stats-total", label: "Total Cabanas" },
+  { id: "stats-available", label: "Available" },
+  { id: "stats-booked", label: "Reserved" },
+];
+
+function renderStats() {
+  const statsBar = document.getElementById("stats");
+  statsBar.innerHTML = STAT_ITEMS.map(
+    ({ id, label }) => `
+    <div class="stats__item">
+      <div class="stats__value" id="${id}">—</div>
+      <div class="stats__label">${label}</div>
+    </div>
+  `,
+  ).join("");
+}
+
 function showError(msg) {
   const el = document.getElementById("form-booking-error");
   el.textContent = msg;
@@ -272,6 +339,9 @@ function setDate() {
 window.addEventListener("DOMContentLoaded", async () => {
   // Date display
   setDate();
+  // Render legend and stats before map loads
+  renderLegend();
+  renderStats();
   // Load map
   await loadMap();
   // Hide loading screen

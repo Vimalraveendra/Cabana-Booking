@@ -44,46 +44,11 @@
         <div class="container">
             <section class="map-header">
                 <div class="map-header__title">Resort Map — click a cabana to book</div>
-                <div class="map-header__legend">
-                    <div class="legend__item">
-                        <img src="assets/cabana.png" alt="Available Cabana"
-                            class="legend__icon legend__icon--available" />
-                        <span>Available</span>
-                    </div>
-                    <div class="legend__item">
-                        <img src="assets/cabana.png" alt="Booked Cabana" class="legend__icon legend__icon--booked" />
-                        <span>Booked</span>
-                    </div>
-                    <div class="legend__item">
-                        <img src="assets/textureWater.png" alt="Pool" class="legend__icon legend__icon--pool" />
-                        <span>Pool</span>
-                    </div>
-                    <div class="legend__item">
-                        <img src="assets/arrowStraight.png" alt="Path" class="legend__icon legend__icon--path" />
-                        <span>Path</span>
-                    </div>
-                    <div class="legend__item">
-                        <img src="assets/houseChimney.png" alt="Chalet" class=" legend__icon legend__icon--chalet" />
-                        <span>Chalet</span>
-                    </div>
-                </div>
+                <div class="map-header__legend" id="legend"></div>
             </section>
 
             <!-- Stats -->
-            <div class="stats" id="stats">
-                <div class="stats__item">
-                    <div class="stats__value" id="stats-total">—</div>
-                    <div class="stats__label">Total Cabanas</div>
-                </div>
-                <div class="stats__item">
-                    <div class="stats__value" id="stats-available">—</div>
-                    <div class="stats__label">Available</div>
-                </div>
-                <div class="stats__item">
-                    <div class="stats__value" id="stats-booked">—</div>
-                    <div class="stats__label">Reserved</div>
-                </div>
-            </div>
+            <div class="stats" id="stats"></div>
 
             <!-- Map -->
             <div class="map" id="map">

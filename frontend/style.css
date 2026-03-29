@@ -29,16 +29,55 @@
       overflow-x: hidden;
     }
 
-    /* Subtle noise texture overlay */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 1000;
-      opacity: 0.4;
-    }
+  /* ── LOADING ── */
+
+.loading {
+  position: fixed;
+  inset: 0;
+  background: var(--chalk);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  z-index: 500;
+  transition: opacity 0.4s;
+    display: none;
+}
+
+.loading--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading__text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--stone);
+}
+
+.loading__dots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.loading__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.loading__dot:nth-child(2) { animation-delay: 0.2s; }
+.loading__dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%       { opacity: 1;   transform: scale(1.1); }
+}
+
          /* ── HEADER ── */
     .header {
       background: var(--chalk);
@@ -82,9 +121,6 @@
       letter-spacing: 0.1em;
     }
 
-     /* States
-    .state { display: none; }
-    .state.active { display: block; } */
 
     .header__text {
       font-family: 'Cormorant Garamond', serif;
@@ -156,11 +192,11 @@
   opacity: 0.6;
 }
 
-     .legend__icon--available { background: var(--gold); }
-    .legend__icon--booked { background: var(--stone); opacity: 0.6; }
-    .legend__icon--pool { background: var(--water-light); }
-    .legend__icon--path { background: var(--path); opacity: 0.3;}
-    .legend__icon--chalet { background: var(--chalet); opacity: 0.8;}
+.legend__icon--available { background: var(--gold); }
+.legend__icon--booked { background: var(--stone); opacity: 0.6; }
+.legend__icon--pool { background: var(--water-light); }
+.legend__icon--path { background: var(--path); opacity: 0.3;}
+.legend__icon--chalet { background: var(--chalet); opacity: 0.8;}
 
     /* ── STATS BAR ── */
     .stats {
@@ -190,4 +226,348 @@
       color: var(--stone);
       font-weight: 700;
     }
+
+/* ── MAP CONTAINER ── */
+   
+    /* MAP GRID */
+  .map {
+      background: var(--chalk);
+      border: 1px solid var(--sand-dark);
+      border-radius: 4px;
+      padding: 1rem;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+      background-image: url('assets/parchmentBasic.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+
+    .map__grid {
+      display: grid;
+      gap: 0;
+      line-height: 1;
+      place-content: center;
+    }
+
+    .map__row {
+      display: flex;
+    }
+
+    /* ── CELLS ── */
+
+    .cell {
+       width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-family: 'DM Mono', monospace;
+      transition: all 0.2s ease;
+      border-radius: 2px;
+      position: relative;
+    }
+      .cell img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .cell--empty { background: transparent; }
+    .cell--path {
+      background: var(--path);
+      opacity: 0.3;
+    }
+
+    .cell--pool {
+      background: var(--water-light);
+      opacity: 0.75;
+      background-image: url('assets/pool.png');
+     background-size: cover;
+     background-repeat: no-repeat;
+    }
+    .cell--chalet {
+      background: var(--chalet);
+      opacity: 0.8;
+      border-radius: 3px;
+    }
+
+    /* ── CABANA CLICK ── */
+
+    .cell--cabana {
+      cursor: pointer;
+      border-radius: 3px;
+      background: var(--gold);
+      box-shadow: 0 1px 4px rgba(201,151,58,0.4);
+      font-size: 0.55rem;
+      color: var(--ink);
+      font-weight: 500;
+    }
+ 
+    .cell--cabana.cell--available {
+  background-color: var(--gold);
+}
+   .cell--cabana.cell--available:hover {
+      transform: scale(1.15);
+      box-shadow: 0 2px 10px rgba(201,151,58,0.6);
+      z-index: 10;
+    }
+
+    .cell--cabana.cell--booked {
+      background: var(--stone);
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .cell--cabana.cell--booked:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .cell-cabana.cell--just-booked {
+      animation: justBooked 0.5s ease forwards;
+    }
+
+    @keyframes justBooked {
+      0% { transform: scale(1.3); background: var(--gold); }
+      100% { transform: scale(1); background: var(--stone); opacity: 0.55; }
+    }
+
+
+
+
+    /* ── MODAL ── */
+    .modal{
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 20, 16, 0.55);
+      backdrop-filter: blur(3px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal--open {
+      display: flex;
+    }
+
+    .modal__content {
+      background: var(--chalk);
+      border-radius: 6px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      animation: modalIn 0.25s ease;
+      position: relative;
+    }
+
+    @keyframes modalIn {
+      from {
+        transform: translateY(16px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal__close {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: var(--stone);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0.2rem;
+    }
+
+    .modal__close:hover {
+      color: var(--ink);
+    }
+
+     /* BOOKING FORM */
+ .modal__badge {
+      display: inline-block;
+      padding: 0.25rem 0.8rem;
+      border-radius: 100px;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .modal__badge--available {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .modal__badge--unavailable {
+      background: var(--stone);
+      color: var(--chalk);
+      opacity: 0.8;
+    }
+
+    .modal__badge--confirmed {
+      background: var(--palm);
+      color: var(--chalk);
+    }
+
+    .modal__title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--ink);
+      margin-bottom: 0.3rem;
+    }
+
+    .modal__subtitle {
+      font-size: 0.68rem;
+      color: var(--stone);
+      letter-spacing: 0.08em;
+      margin-bottom: 1.5
+    }
+
+    .modal__divider {
+      height: 1px;
+      background: var(--sand-dark);
+      margin: 1.2rem 0;
+    }
+ /* FORM */
+    .form__group{
+      margin-bottom: 1.2rem;
+    }
+
+   .form__label {
+      display: block;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-bottom: 0.5rem;
+    }
+
+   .form__input {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      background: var(--sand);
+      border: 1px solid var(--sand-dark);
+      border-radius: 3px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form__input:focus {
+      border-color: var(--gold);
+    }
+
+     .form__error {
+      background: #fdf0f0;
+      border: 1px solid #e8c5c5;
+      border-radius: 3px;
+      padding: 0.7rem 0.9rem;
+      font-size: 0.72rem;
+      color: #7a3333;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    /* BUTTON */
+
+    .btn {
+      width: 100%;
+      padding: 0.85rem;
+      border: none;
+      border-radius: 3px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn--primary {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .btn--primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(201,151,58,0.3);
+    }
+
+    .btn--primary:active { transform: translateY(0); }
+    .btn--primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn--secondary {
+      background: transparent;
+      color: var(--stone);
+      border: 1px solid var(--sand-dark);
+      margin-top: 0.7rem;
+    }
+
+    .btn--secondary:hover {
+      border-color: var(--stone);
+      color: var(--ink);
+    }
+
+  /*CARD INFO */
+
+    .modal__card {
+      background: var(--sand);
+      border: 1px solid var(--sand-dark);
+      border-radius: 4px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .modal__card-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-bottom: 0.25rem;
+    }
+
+    .modal__card-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+ 
+    /* CONFIRMATION STATE */
+    .modal__icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal__detail {
+      font-size: 0.72rem;
+      color: var(--stone);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal__detail strong {
+      color: var(--ink);
+      font-weight: 400;
+    }
+
+
 

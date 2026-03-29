@@ -58,6 +58,7 @@ const createApp = (options = {}) => {
         }
       }
     }
+    return cabanas;
   };
   const cabanas = parseCabanas(mapLines);
 
@@ -113,7 +114,6 @@ const createApp = (options = {}) => {
         g.roomNumber.trim().toLowerCase() === roomNumber.trim().toLowerCase() &&
         g.guestName.trim().toLowerCase() === guestName.trim().toLowerCase(),
     );
-
     if (!guest) {
       res.status(401).json({
         error:

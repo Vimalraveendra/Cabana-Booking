@@ -93,6 +93,67 @@
         </div>
     </main>
 
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal__content">
+            <button class="modal__close" onclick="closeModal()">✕</button>
+
+            <!-- Booking form (available cabana) -->
+            <div class="modal__panel" id="modal-booking" style="display:none">
+                <div class="modal__badge modal__badge--available">Available</div>
+                <div class="modal__title" id="modal-cabana-name">—</div>
+                <div class="modal__subtitle">Enter your details to reserve this cabana</div>
+                <div class="modal__divider"></div>
+                <!-- — wrap in form block -->
+                <form class="form" id="form">
+                    <div class="form__error"></div>
+                    <div class="form__group">
+                        <label class="form__label" for="input-room">Room Number</label>
+                        <input class="form__input" type="text" id="input-room" placeholder="e.g. 101"
+                            autocomplete="off" />
+                    </div>
+                    <div class="form__group">
+                        <label class="form__label" for="input-name">Guest Name</label>
+                        <input class="form__input" type="text" id="input-name" placeholder="e.g. Alice Johnson"
+                            autocomplete="off" />
+                    </div>
+                </form>
+                <button class="btn btn--primary" id="modal-booking-button" onclick="submitBooking()">Reserve This
+                    Cabana</button>
+                <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+            </div>
+
+            <!-- Unavailable -->
+            <div class="modal__panel" id="modal-unavailable" style="display:none">
+                <div class="modal__badge modal__badge--unavailable">Already Reserved</div>
+                <div class="modal__title" id="modal-unavailable-cabana-name">—</div>
+                <div class="modal__subtitle">This cabana is currently booked</div>
+                <div class="modal__divider"></div>
+                <div class="modal__card">
+                    <div class="modal__card-abel">Reserved by</div>
+                    <div class="modal__card-value" id="modal-unavailable-guest">—</div>
+                </div>
+                <div class="modal__card">
+                    <div class="modal__card-label">Room</div>
+                    <div class="modal__card-value" id="modal-unavailable-room">—</div>
+                </div>
+                <div class="modal__divider"></div>
+                <button class="btn btn--secondary" onclick="closeModal()">← Back to Map</button>
+            </div>
+
+            <!-- Confirmation -->
+            <div class="modal__panel" id="modal-confirm" style="display:none">
+                <div class="modal__icon">✦</div>
+                <div class="modal__badge modal__badge--confirmed">Confirmed</div>
+                <div class="modal__title">Reservation Complete</div>
+                <div class="modal__divider"></div>
+                <div class="modal__detail" id="modal-confirm-detail">—</div>
+                <button class="btn btn--primary" onclick="closeModal()">← Back to Map</button>
+            </div>
+
+        </div>
+    </div>
+
 </body>
 
 </html>

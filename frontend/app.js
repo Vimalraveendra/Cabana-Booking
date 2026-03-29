@@ -2,6 +2,28 @@ const API = ""; // same origin
 let mapData = null;
 let selectedCabanaId = null;
 
+// ── CABANA CLICK ──
+function handleCabanaClick(cabana) {
+  selectedCabanaId = cabana.id;
+  if (!cabana.available) {
+    document.getElementById("modal-unavailable-cabana-name").textContent =
+      cabanaLabel(cabana.id);
+    document.getElementById("modal-unavailable-guest").textContent =
+      cabana.booking?.guestName || "—";
+    document.getElementById("modal-unavailable-room").textContent = cabana
+      .booking?.roomNumber
+      ? "Room " + cabana.booking.roomNumber
+      : "—";
+    openModal("modal-unavailable");
+  } else {
+    document.getElementById("booking-cabana-name").textContent = cabanaLabel(
+      cabana.id,
+    );
+    openModal("modal-booking");
+    setTimeout(() => document.getElementById("input-room").focus(), 100);
+  }
+}
+
 //CABANA LABEL
 function cabanaLabel(id) {
   return "Cabana " + id.replace("-", ":");
@@ -21,46 +43,31 @@ function getPathType(grid, r, c) {
 
   // 3-way T-junctions (corner split)
   if (count === 3) {
-    if (!up) return { type: "split", rotate: "90deg" }; // T facing down
-    if (!down) return { type: "split", rotate: "270deg" }; // T facing up
-    if (!left) return { type: "split", rotate: "0deg" }; // T facing right: ;
-    if (!right) return { type: "split", rotate: "270deg" }; // T facing left
+    if (!up) return { type: "split", rotate: "90deg" };
+    if (!down) return { type: "split", rotate: "270deg" };
+    if (!left) return { type: "split", rotate: "0deg" };
+    if (!right) return { type: "split", rotate: "270deg" };
   }
 
   // Straight
   if (left && right && !up && !down)
-    return { type: "straight", rotate: "90deg" }; // straight-h
+    return { type: "straight", rotate: "90deg" };
   if (up && down && !left && !right)
-    // straight -v
     return { type: "straight", rotate: "0deg" };
 
   // Corners
-  if (right && down && !up && !left)
-    // top-left
-    return { type: "corner", rotate: "90deg" };
+  if (right && down && !up && !left) return { type: "corner", rotate: "90deg" };
   if (left && down && !up && !right)
-    //top-right
     return { type: "corner", rotate: "180deg" };
-  if (right && up && !down && !left)
-    // bottom-left
-    return { type: "corner", rotate: "0deg" };
+  if (right && up && !down && !left) return { type: "corner", rotate: "0deg" };
   if (left && up && !down && !right)
-    //bottom-right
     return { type: "corner", rotate: "270deg" };
 
   // End caps
-  if (right && !left && !up && !down)
-    //end-left
-    return { type: "end", rotate: "270deg" };
-  if (left && !right && !up && !down)
-    //end-right
-    return { type: "end", rotate: "90deg" };
-  if (down && !up && !left && !right)
-    //end-top
-    return { type: "end", rotate: "90deg" };
-  if (up && !down && !left && !right)
-    //end-bottom
-    return { type: "end", rotate: "270deg" };
+  if (right && !left && !up && !down) return { type: "end", rotate: "270deg" };
+  if (left && !right && !up && !down) return { type: "end", rotate: "90deg" };
+  if (down && !up && !left && !right) return { type: "end", rotate: "90deg" };
+  if (up && !down && !left && !right) return { type: "end", rotate: "270deg" };
 
   return { type: "straight", rotate: "0deg" };
 }
@@ -150,7 +157,7 @@ async function loadMap() {
   }
 }
 
-// Date display
+// DATE DISPLAY
 function setDate() {
   const now = new Date();
   document.getElementById("header-date").textContent = now.toLocaleDateString(

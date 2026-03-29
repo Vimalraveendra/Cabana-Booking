@@ -58,6 +58,7 @@ const createApp = (options = {}) => {
         }
       }
     }
+    return cabanas;
   };
   const cabanas = parseCabanas(mapLines);
 

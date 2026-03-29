@@ -2,6 +2,108 @@ const API = ""; // same origin
 let mapData = null;
 let selectedCabanaId = null;
 
+function showError(msg) {
+  const el = document.getElementById("form-booking-error");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+// ── Modal helpers ──
+function openModal(panel) {
+  ["modal-booking", "modal-unavailable", "modal-confirm"].forEach((id) => {
+    document.getElementById(id).style.display = id === panel ? "block" : "none";
+  });
+  document.getElementById("modal").classList.add("modal--open");
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("modal--open");
+  document.getElementById("form-booking-error").style.display = "none";
+  document.getElementById("input-room").value = "";
+  document.getElementById("input-name").value = "";
+  selectedCabanaId = null;
+}
+
+// Close on backdrop click
+document.getElementById("modal").addEventListener("click", function (e) {
+  if (e.target === this) closeModal();
+});
+
+// ── Booking submit ──
+
+async function submitBooking() {
+  const roomNumber = document.getElementById("input-room").value.trim();
+  const guestName = document.getElementById("input-name").value.trim();
+  if (!roomNumber || !guestName) {
+    showError("Please enter both your room number and full name.");
+    return;
+  }
+
+  const btn = document.getElementById("modal-booking-button");
+  btn.disabled = true;
+  btn.textContent = "Processing...";
+
+  try {
+    const res = await fetch("/api/book", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cabanaId: selectedCabanaId,
+        roomNumber,
+        guestName,
+      }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError(data.error || "Booking failed. Please try again.");
+      return;
+    }
+
+    // Update local map data
+    const cabana = mapData.cabanas.find((c) => c.id === selectedCabanaId);
+    if (cabana) {
+      cabana.available = false;
+      cabana.booking = data.booking;
+    }
+
+    // Update cell visually
+    const cell = document.querySelector(
+      `[data-cabana-id="${selectedCabanaId}"]`,
+    );
+    if (cell) {
+      cell.classList.remove("cell--available");
+      cell.classList.add("cell--booked", "cell--just-booked");
+      cell.title = `Booked — ${guestName} (Room ${roomNumber})`;
+    }
+
+    // Update stats
+    updateStats();
+
+    // Show confirmation
+    document.getElementById("modal-confirm-detail").innerHTML =
+      `<strong>${guestName}</strong><br>Room ${roomNumber}<br><br>` +
+      `${cabanaLabel(selectedCabanaId)} is reserved for you.<br>Enjoy your day at the pool! 🌴`;
+    openModal("modal-confirm");
+  } catch (err) {
+    showError("Network error. Please try again.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Reserve This Cabana";
+  }
+}
+
+// ── UPDATE STATUS ──
+
+function updateStats() {
+  if (!mapData) return;
+  const total = mapData.cabanas.length;
+  const avail = mapData.cabanas.filter((c) => c.available).length;
+  document.getElementById("stats-total").textContent = total;
+  document.getElementById("stats-available").textContent = avail;
+  document.getElementById("stats-booked").textContent = total - avail;
+}
+
 // ── CABANA CLICK ──
 function handleCabanaClick(cabana) {
   selectedCabanaId = cabana.id;
@@ -16,7 +118,7 @@ function handleCabanaClick(cabana) {
       : "—";
     openModal("modal-unavailable");
   } else {
-    document.getElementById("booking-cabana-name").textContent = cabanaLabel(
+    document.getElementById("modal-cabana-name").textContent = cabanaLabel(
       cabana.id,
     );
     openModal("modal-booking");
@@ -143,6 +245,7 @@ function renderMap(data) {
 
     container.appendChild(rowEl);
   }
+  updateStats();
 }
 // LOAD MAP
 async function loadMap() {
@@ -151,7 +254,6 @@ async function loadMap() {
     const data = await res.json();
     renderMap(data);
   } catch (e) {
-    console.log("e", e);
     document.getElementById("map-grid").innerHTML =
       '<div style="padding:2rem;color:#7a3333;font-size:0.8rem;">Failed to load resort map. Is the server running?</div>';
   }

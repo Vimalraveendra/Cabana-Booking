@@ -1,10 +1,11 @@
-const API = ""; // same origin
-let mapData = null;
-let selectedCabanaId = null;
+import { Cabana, LegendItem, MapResponse, PathResult, StatsItem } from "./app.types";
+
+let mapData:MapResponse|null = null;
+let selectedCabanaId:string|null = null;
 
 // ── LEGEND (dynamic) ──
 
-const LEGEND_ITEMS = [
+const LEGEND_ITEMS:LegendItem[] = [
   {
     src: "assets/cabana.png",
     alt: "Available Cabana",
@@ -37,78 +38,116 @@ const LEGEND_ITEMS = [
   },
 ];
 
-function renderLegend() {
-  const legend = document.getElementById("legend");
-  legend.innerHTML = LEGEND_ITEMS.map(
-    ({ src, alt, modifier, label }) => `
-    <div class="legend__item">
-      <img src="${src}" alt="${alt}" class="legend__icon legend__icon--${modifier}" />
-      <span>${label}</span>
-    </div>
-  `,
-  ).join("");
+function renderLegend():void {
+  const legend = document.getElementById('legend');
+    if(legend instanceof HTMLElement){
+      legend!.innerHTML = LEGEND_ITEMS.map(
+      ({ src, alt, modifier, label }) => `
+      <div class="legend__item">
+        <img src="${src}" alt="${alt}" class="legend__icon legend__icon--${modifier}" />
+        <span>${label}</span>
+      </div>
+    `,
+    ).join("");
+
+  }
 }
 
 // ── STATS (dynamic)──
 
-const STAT_ITEMS = [
+const STAT_ITEMS:StatsItem[] = [
   { id: "stats-total", label: "Total Cabanas" },
   { id: "stats-available", label: "Available" },
   { id: "stats-booked", label: "Reserved" },
 ];
 
-function renderStats() {
+function renderStats():void {
   const statsBar = document.getElementById("stats");
-  statsBar.innerHTML = STAT_ITEMS.map(
-    ({ id, label }) => `
-    <div class="stats__item">
-      <div class="stats__value" id="${id}">—</div>
-      <div class="stats__label">${label}</div>
-    </div>
-  `,
-  ).join("");
+  if(statsBar instanceof HTMLElement){
+    statsBar.innerHTML = STAT_ITEMS.map(
+      ({ id, label }) => `
+      <div class="stats__item">
+        <div class="stats__value" id="${id}">—</div>
+        <div class="stats__label">${label}</div>
+      </div>
+    `,
+    ).join("");
+
+  }
 }
 
-function showError(msg) {
+function showError(msg:string):void {
   const el = document.getElementById("form-booking-error");
-  el.textContent = msg;
-  el.style.display = "block";
+  if(el instanceof HTMLElement){
+    el.textContent = msg;
+    el.style.display = "block";
+  }
 }
 
 // ── Modal helpers ──
-function openModal(panel) {
+function openModal(panel:string):void{
   ["modal-booking", "modal-unavailable", "modal-confirm"].forEach((id) => {
-    document.getElementById(id).style.display = id === panel ? "block" : "none";
+    const element =document.getElementById(id);
+     if(element instanceof HTMLElement){
+        element.style.display = id === panel ? "block" : "none";
+     }
   });
-  document.getElementById("modal").classList.add("modal--open");
+  const modal= document.getElementById("modal");
+  if(modal instanceof HTMLElement){
+      modal.classList.add("modal--open");
+  }
 }
 
-function closeModal() {
-  document.getElementById("modal").classList.remove("modal--open");
-  document.getElementById("form-booking-error").style.display = "none";
-  document.getElementById("input-room").value = "";
-  document.getElementById("input-name").value = "";
+  // reset input fields
+   function resetInputValue (id: string): void {
+    const input = document.getElementById(id);
+    if (input instanceof HTMLInputElement) input.value = "";
+  };
+
+function closeModal():void {
+  const modal =document.getElementById("modal");
+  const bookingError=document.getElementById("form-booking-error");
+  if(modal instanceof HTMLElement ){
+     modal.classList.remove("modal--open");
+  }
+  if(bookingError instanceof HTMLElement){
+    bookingError.style.display = "none";
+  }
+    resetInputValue("input-room");
+    resetInputValue("input-name");
   selectedCabanaId = null;
 }
 
 // Close on backdrop click
-document.getElementById("modal").addEventListener("click", function (e) {
+const modal =document.getElementById("modal")
+if(modal instanceof HTMLElement){
+  modal.addEventListener("click", function (e) {
   if (e.target === this) closeModal();
-});
+  });
+}
+
+  // reset input fields
+   function getInputValue (id: string): string{
+    const input = document.getElementById(id);
+    if (input instanceof HTMLInputElement) return input.value.trim();
+    return " ";
+  };
 
 // ── Booking submit ──
 
-async function submitBooking() {
-  const roomNumber = document.getElementById("input-room").value.trim();
-  const guestName = document.getElementById("input-name").value.trim();
+async function submitBooking():Promise<void> {
+  const roomNumber =getInputValue("input-room");
+  const guestName =getInputValue("input-name");
   if (!roomNumber || !guestName) {
     showError("Please enter both your room number and full name.");
     return;
   }
 
   const btn = document.getElementById("modal-booking-button");
-  btn.disabled = true;
-  btn.textContent = "Processing...";
+  if(btn instanceof HTMLButtonElement){
+    btn.disabled = true;
+    btn.textContent = "Processing...";
+  }
 
   try {
     const res = await fetch("/api/book", {
@@ -128,7 +167,7 @@ async function submitBooking() {
     }
 
     // Update local map data
-    const cabana = mapData.cabanas.find((c) => c.id === selectedCabanaId);
+    const cabana = mapData?.cabanas.find((c) => c.id === selectedCabanaId);
     if (cabana) {
       cabana.available = false;
       cabana.booking = data.booking;
@@ -137,7 +176,7 @@ async function submitBooking() {
     // Update cell visually
     const cell = document.querySelector(
       `[data-cabana-id="${selectedCabanaId}"]`,
-    );
+    )as HTMLElement;
     if (cell) {
       cell.classList.remove("cell--available");
       cell.classList.add("cell--booked", "cell--just-booked");
@@ -148,16 +187,27 @@ async function submitBooking() {
     updateStats();
 
     // Show confirmation
-    document.getElementById("modal-confirm-detail").innerHTML =
+    const confirmDetail=document.getElementById("modal-confirm-detail");
+    if(confirmDetail instanceof HTMLElement){
+        confirmDetail.innerHTML =
       `<strong>${guestName}</strong><br>Room ${roomNumber}<br><br>` +
-      `${cabanaLabel(selectedCabanaId)} is reserved for you.<br>Enjoy your day at the pool! 🌴`;
+      `${cabanaLabel(selectedCabanaId!)} is reserved for you.<br>Enjoy your day at the pool! 🌴`;
     openModal("modal-confirm");
+    }
   } catch (err) {
     showError("Network error. Please try again.");
   } finally {
-    btn.disabled = false;
-    btn.textContent = "Reserve This Cabana";
-  }
+      if(btn instanceof HTMLButtonElement){
+        btn.disabled = false;
+        btn.textContent = "Reserve This Cabana";
+      }
+}
+}
+
+// set text content
+function setText(id: string, text: string): void {
+  const el = document.getElementById(id);
+  if (el instanceof HTMLElement) el.textContent = text;
 }
 
 // ── UPDATE STATUS ──
@@ -165,14 +215,14 @@ async function submitBooking() {
 function updateStats() {
   if (!mapData) return;
   const total = mapData.cabanas.length;
-  const avail = mapData.cabanas.filter((c) => c.available).length;
-  document.getElementById("stats-total").textContent = total;
-  document.getElementById("stats-available").textContent = avail;
-  document.getElementById("stats-booked").textContent = total - avail;
+  const available = mapData.cabanas.filter((c) => c.available).length;
+  setText("stats-total",String(total));
+  setText("stats-available",String(available));
+  setText("stats-booked",String(total - available));
 }
 
 // ── MASK DATA──
-function maskData(name) {
+function maskData(name:string):string {
   const words = name.trim().split(" ");
   return words
     .map((word) => {
@@ -181,37 +231,36 @@ function maskData(name) {
     .join(" ");
 }
 
-// ── CABANA CLICK ──
-function handleCabanaClick(cabana) {
-  selectedCabanaId = cabana.id;
-  if (!cabana.available) {
-    document.getElementById("modal-unavailable-cabana-name").textContent =
-      cabanaLabel(cabana.id);
-    document.getElementById("modal-unavailable-guest").textContent = cabana
-      .booking?.guestName
-      ? maskData(cabana.booking.guestName)
-      : "—";
-    document.getElementById("modal-unavailable-room").textContent = cabana
-      .booking?.roomNumber
-      ? "Room " + maskData(cabana.booking.roomNumber)
-      : "—";
-    openModal("modal-unavailable");
-  } else {
-    document.getElementById("modal-cabana-name").textContent = cabanaLabel(
-      cabana.id,
-    );
-    openModal("modal-booking");
-    setTimeout(() => document.getElementById("input-room").focus(), 100);
-  }
-}
-
 //CABANA LABEL
-function cabanaLabel(id) {
+function cabanaLabel(id:string):string {
   return "Cabana " + id.replace("-", ":");
 }
 
+// ── CABANA CLICK ──
+function handleCabanaClick(cabana:Cabana):void {
+  selectedCabanaId = cabana.id;
+ 
+  if (!cabana.available) {
+    setText("modal-unavailable-cabana-name",cabanaLabel(cabana.id));
+    setText("modal-unavailable-guest",cabana
+      .booking?.guestName
+      ? maskData(cabana.booking.guestName)
+      : "—");
+      setText("modal-unavailable-room",cabana
+      .booking?.roomNumber
+      ? "Room " + maskData(cabana.booking.roomNumber)
+      : "—");
+    openModal("modal-unavailable");
+  } else {
+    setText("modal-cabana-name",cabanaLabel(cabana.id));
+    openModal("modal-booking");
+    setTimeout(() => (document.getElementById("input-room")as HTMLInputElement).focus(), 100);
+  }
+}
+
+
 // PATH TILE DETECTION
-function getPathType(grid, r, c) {
+function getPathType(grid:string[][], r:number, c:number):PathResult {
   const up = r > 0 && grid[r - 1][c] === "#";
   const down = r < grid.length - 1 && grid[r + 1][c] === "#";
   const left = c > 0 && grid[r][c - 1] === "#";
@@ -254,15 +303,15 @@ function getPathType(grid, r, c) {
 }
 
 // RENDER MAP
-function renderMap(data) {
+function renderMap(data:MapResponse):void {
   mapData = data;
   const grid = data.grid;
-  const cabanaMap = {};
+  const cabanaMap:Record<string, Cabana> = {};
   for (const c of data.cabanas) {
     cabanaMap[`${c.row}-${c.col}`] = c;
   }
 
-  const container = document.getElementById("map-grid");
+  const container = document.getElementById("map-grid")as HTMLElement;
   container.innerHTML = "";
 
   for (let r = 0; r < grid.length; r++) {
@@ -327,24 +376,30 @@ function renderMap(data) {
   updateStats();
 }
 // LOAD MAP
-async function loadMap() {
+async function loadMap():Promise<void> {
   try {
     const res = await fetch("/api/map");
     const data = await res.json();
     renderMap(data);
   } catch (e) {
-    document.getElementById("map-grid").innerHTML =
-      '<div style="padding:2rem;color:#7a3333;font-size:0.8rem;">Failed to load resort map. Is the server running?</div>';
+    const mapGrid=document.getElementById("map-grid");
+    if(mapGrid instanceof HTMLElement){
+          mapGrid.innerHTML =
+         '<div style="padding:2rem;color:#7a3333;font-size:0.8rem;">Failed to load resort map. Is the server running?</div>';
+    }
   }
 }
 
 // DATE DISPLAY
-function setDate() {
+function setDate():void {
   const now = new Date();
-  document.getElementById("header-date").textContent = now.toLocaleDateString(
-    "en-US",
-    { weekday: "long", year: "numeric", month: "long", day: "numeric" },
-  );
+  const headerDate=document.getElementById("header-date");
+    if(headerDate instanceof HTMLElement){
+          headerDate.textContent = now.toLocaleDateString(
+          "en-US",
+          { weekday: "long", year: "numeric", month: "long", day: "numeric" },
+          );
+    }
 }
 
 // INIT
@@ -357,7 +412,10 @@ window.addEventListener("DOMContentLoaded", async () => {
   // Load map
   await loadMap();
   // Hide loading screen
-  const loading = document.getElementById("loading");
-  loading.classList.add("loading--hidden");
-  setTimeout(() => loading.remove(), 500);
+  const loading =document.getElementById("loading");
+  if(loading instanceof HTMLElement){
+   loading.classList.add("loading--hidden");
+   setTimeout(() => loading.remove(), 500);
+  }
 });
+

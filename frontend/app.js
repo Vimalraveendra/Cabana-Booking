@@ -171,17 +171,29 @@ function updateStats() {
   document.getElementById("stats-booked").textContent = total - avail;
 }
 
+// ── MASK DATA──
+function maskData(name) {
+  const words = name.trim().split(" ");
+  return words
+    .map((word) => {
+      return "*".repeat(word.length);
+    })
+    .join(" ");
+}
+
 // ── CABANA CLICK ──
 function handleCabanaClick(cabana) {
   selectedCabanaId = cabana.id;
   if (!cabana.available) {
     document.getElementById("modal-unavailable-cabana-name").textContent =
       cabanaLabel(cabana.id);
-    document.getElementById("modal-unavailable-guest").textContent =
-      cabana.booking?.guestName || "—";
+    document.getElementById("modal-unavailable-guest").textContent = cabana
+      .booking?.guestName
+      ? maskData(cabana.booking.guestName)
+      : "—";
     document.getElementById("modal-unavailable-room").textContent = cabana
       .booking?.roomNumber
-      ? "Room " + cabana.booking.roomNumber
+      ? "Room " + maskData(cabana.booking.roomNumber)
       : "—";
     openModal("modal-unavailable");
   } else {
@@ -270,7 +282,7 @@ function renderMap(data) {
         cell.dataset.cabanaId = cabana.id;
         cell.title = cabana.available
           ? `${cabanaLabel(cabana.id)} — Click to book`
-          : `${cabanaLabel(cabana.id)} — Booked (${(cabana.booking && cabana.booking.guestName) || ""})`;
+          : `${cabanaLabel(cabana.id)} — Booked`;
         const img = document.createElement("img");
         img.src = cabana.available ? "assets/cabana.png" : "assets/cabana.png";
         img.style.width = "100%";

@@ -114,3 +114,61 @@ describe("Stats update after booking", () => {
     expect(booked).toBe(1);
   });
 });
+
+// ── Masking ──
+describe("Guest data masking", () => {
+  function maskData(name) {
+    return name
+      .trim()
+      .split(" ")
+      .map((word) => {
+        if (word.length <= 2) return word;
+        return "*".repeat(word.length);
+      })
+      .join(" ");
+  }
+  test("masks  characters of name", () => {
+    expect(maskData("Alice Johnson")).toBe("***** *******");
+  });
+
+  test("masks room number", () => {
+    expect(maskData("101")).toBe("***");
+  });
+
+  test("words length less than 3 are not masked", () => {
+    expect(maskData("Al")).toBe("Al");
+  });
+});
+
+// ── Path detection ──
+describe("Path tile detection", () => {
+  test("identifies straight horizontal path", () => {
+    const grid = [
+      [".", ".", "."],
+      ["#", "#", "#"],
+      [".", ".", "."],
+    ];
+    const r = 1,
+      c = 1;
+    const left = grid[r][c - 1] === "#";
+    const right = grid[r][c + 1] === "#";
+    const up = grid[r - 1][c] === "#";
+    const down = grid[r + 1][c] === "#";
+    expect(left && right && !up && !down).toBe(true);
+  });
+
+  test("identifies corner path", () => {
+    const grid = [
+      [".", "#", "."],
+      [".", "#", "#"],
+      [".", ".", "."],
+    ];
+    const r = 1,
+      c = 1;
+    const left = grid[r][c - 1] === "#";
+    const right = grid[r][c + 1] === "#";
+    const up = grid[r - 1][c] === "#";
+    const down = grid[r + 1][c] === "#";
+    expect(right && up && !left && !down).toBe(true);
+  });
+});

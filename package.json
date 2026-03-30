@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node backend/server.js --map map.ascii  --bookings bookings.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+     "test": "jest tests/",
+    "test:watch": "jest tests/ --watch"
   },
   "keywords": [],
   "author": "Vimal Raveendran",
@@ -13,5 +14,9 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
   }
 }

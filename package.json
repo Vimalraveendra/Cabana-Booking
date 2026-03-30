@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node backend/server.js --map map.ascii  --bookings bookings.json",
-     "test": "jest tests/",
+    "test": "jest tests/",
+    "test:backend": "jest tests/server.test.js",
+    "test:frontend": "jest tests/app.test.js",
     "test:watch": "jest tests/ --watch"
   },
   "keywords": [],
@@ -17,6 +19,7 @@
   },
   "devDependencies": {
     "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "supertest": "^7.2.2"
   }
 }

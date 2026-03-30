@@ -115,7 +115,7 @@ const createApp = (options = {}) => {
         g.guestName.trim().toLowerCase() === guestName.trim().toLowerCase(),
     );
     if (!guest) {
-      res.status(401).json({
+      return res.status(401).json({
         error:
           "No guest found with that room number and name.Please check your details.",
       });

@@ -3,6 +3,7 @@ node_modules/
 
 # Build output
 dist/
+frontend/app.js
 
 # Keep frontend/app.js — needed to run without build step
 # frontend/app.js

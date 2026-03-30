@@ -146,3 +146,4 @@ if (require.main === module) {
     console.log(`🌴 Cabana Booking Server running at http://localhost:${PORT}`);
   });
 }
+module.exports = { createApp };

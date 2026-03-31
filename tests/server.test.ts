@@ -107,14 +107,14 @@ describe("POST /api/book", () => {
     const { cabanas }: MapResponse = mapRes.body;
     const availableCabana = cabanas.find((c:CabanaWithStatus) => c.available);
      if(!availableCabana) return;
-    const booking:BookingRequest={
+    const firstBooking:BookingRequest={
       cabanaId: availableCabana.id,
       roomNumber: "104",
       guestName: "David Brown",
     }
 
     // First booking
-    await request(app).post("/api/book").send(booking);
+    await request(app).post("/api/book").send(firstBooking);
 
     // Second attempt
     const secondBooking: BookingRequest = {
@@ -139,14 +139,18 @@ describe("POST /api/book", () => {
 
   test("name matching is case-insensitive", async () => {
     const mapRes = await request(app).get("/api/map");
-    const availableCabana = mapRes.body.cabanas.find((c:CabanaWithStatus) => c.available);
+    const { cabanas }: MapResponse = mapRes.body;
+    const availableCabana = cabanas.find((c:CabanaWithStatus) => c.available);
     expect(availableCabana).toBeDefined();
+    if(!availableCabana) return;
 
-    const res = await request(app).post("/api/book").send({
+    const booking: BookingRequest ={
       cabanaId: availableCabana.id,
       roomNumber: "201",
       guestName: "uma lopez", // lowercase
-    });
+    };
+
+    const res = await request(app).post("/api/book").send(booking);
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
   });

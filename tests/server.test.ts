@@ -1,26 +1,12 @@
-const request = require("supertest");
-const path = require("path");
-const fs = require("fs");
-const os = require("os");
+import request from 'supertest';
+import path from 'path';
+import {createApp} from "../backend/server";
+import { BookingRequest, CabanaWithStatus, MapResponse } from '../backend/types';
 
-// We need to isolate the app from process.argv
-// Patch process.argv before requiring the server module
-const mapPath = path.join(__dirname, "../map.ascii");
-const bookingsPath = path.join(__dirname, "../bookings.json");
+const mapFile= path.join(__dirname, "../map.ascii");
+const bookingsFile = path.join(__dirname, "../bookings.json");
 
-// We'll use a fresh require with injected options
-function makeApp(options = {}) {
-  // Clear require cache
-  delete require.cache[require.resolve("../backend/server.js")];
-  const { createApp } = require("../backend/server.js");
-  return createApp(options);
-}
-
-let app;
-
-beforeAll(() => {
-  app = makeApp({ mapFile: mapPath, bookingsFile: bookingsPath });
-});
+const app = createApp({ mapFile, bookingsFile });
 
 describe("GET /api/map", () => {
   test("returns grid and cabanas", async () => {
@@ -34,7 +20,7 @@ describe("GET /api/map", () => {
 
   test("cabanas have id, row, col, available fields", async () => {
     const res = await request(app).get("/api/map");
-    const cabanas = res.body.cabanas;
+    const {cabanas}:MapResponse = res.body;
     expect(cabanas.length).toBeGreaterThan(0);
     for (const c of cabanas) {
       expect(c).toHaveProperty("id");
@@ -46,7 +32,7 @@ describe("GET /api/map", () => {
 
   test("grid contains W for cabana positions", async () => {
     const res = await request(app).get("/api/map");
-    const { grid, cabanas } = res.body;
+    const { grid, cabanas }:MapResponse = res.body;
     for (const c of cabanas) {
       expect(grid[c.row][c.col]).toBe("W");
     }
@@ -62,28 +48,32 @@ describe("POST /api/book", () => {
 
   test("returns 401 for invalid guest credentials", async () => {
     const mapRes = await request(app).get("/api/map");
-    const availableCabana = mapRes.body.cabanas.find((c) => c.available);
+    const { cabanas }: MapResponse = mapRes.body;
+    const availableCabana = cabanas.find((c:CabanaWithStatus) => c.available);
     expect(availableCabana).toBeDefined();
-
-    const res = await request(app).post("/api/book").send({
+    if(!availableCabana) return;
+    const booking:BookingRequest={
       cabanaId: availableCabana.id,
       roomNumber: "999",
       guestName: "Nobody Here",
-    });
+    }
+    const res = await request(app).post("/api/book").send(booking);
     expect(res.status).toBe(401);
     expect(res.body.error).toMatch(/no guest found/i);
   });
 
   test("books successfully with valid guest", async () => {
     const mapRes = await request(app).get("/api/map");
-    const availableCabana = mapRes.body.cabanas.find((c) => c.available);
+    const { cabanas }: MapResponse = mapRes.body;
+    const availableCabana = cabanas.find((c:CabanaWithStatus) => c.available);
     expect(availableCabana).toBeDefined();
-
-    const res = await request(app).post("/api/book").send({
+    if(!availableCabana) return;
+    const booking:BookingRequest={
       cabanaId: availableCabana.id,
       roomNumber: "102",
       guestName: "Bob Jones",
-    });
+    }
+    const res = await request(app).post("/api/book").send(booking);
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
     expect(res.body.booking.guestName).toBe("Bob Jones");
@@ -91,54 +81,65 @@ describe("POST /api/book", () => {
 
   test("cabana becomes unavailable after booking", async () => {
     const mapRes1 = await request(app).get("/api/map");
-    const availableCabana = mapRes1.body.cabanas.find((c) => c.available);
+    const { cabanas:initialCabanas }: MapResponse = mapRes1.body;
+    const availableCabana =initialCabanas.find((c:CabanaWithStatus) => c.available);
 
-    // Book it
-    await request(app).post("/api/book").send({
+   if(!availableCabana) return;
+    const booking:BookingRequest={
       cabanaId: availableCabana.id,
       roomNumber: "103",
       guestName: "Carol White",
-    });
+    }
+
+    // Book it
+    await request(app).post("/api/book").send(booking);
 
     // Check map again
     const mapRes2 = await request(app).get("/api/map");
-    const same = mapRes2.body.cabanas.find((c) => c.id === availableCabana.id);
+    const { cabanas :updatedCabanas}: MapResponse = mapRes2.body;
+    const same = updatedCabanas.find((c:CabanaWithStatus) => c.id === availableCabana.id);
+    if (!same) return;
     expect(same.available).toBe(false);
   });
 
   test("returns 409 when booking an already-booked cabana", async () => {
     const mapRes = await request(app).get("/api/map");
-    const availableCabana = mapRes.body.cabanas.find((c) => c.available);
-
-    // First booking
-    await request(app).post("/api/book").send({
+    const { cabanas }: MapResponse = mapRes.body;
+    const availableCabana = cabanas.find((c:CabanaWithStatus) => c.available);
+     if(!availableCabana) return;
+    const booking:BookingRequest={
       cabanaId: availableCabana.id,
       roomNumber: "104",
       guestName: "David Brown",
-    });
+    }
+
+    // First booking
+    await request(app).post("/api/book").send(booking);
 
     // Second attempt
-    const res = await request(app).post("/api/book").send({
-      cabanaId: availableCabana.id,
-      roomNumber: "105",
-      guestName: "Eva Martinez",
-    });
+    const secondBooking: BookingRequest = {
+    cabanaId: availableCabana.id,
+    roomNumber: '105',
+    guestName: 'Eva Martinez',
+  };
+    const res = await request(app).post("/api/book").send(secondBooking);
     expect(res.status).toBe(409);
     expect(res.body.error).toMatch(/already booked/i);
   });
 
   test("returns 404 for unknown cabana id", async () => {
-    const res = await request(app).post("/api/book").send({
+    const booking: BookingRequest ={
       cabanaId: "nonexistent-id",
       roomNumber: "101",
-      guestName: "Alice Johnson",
-    });
+      guestName: "Alice Smith",
+    };
+    const res = await request(app).post("/api/book").send(booking);
     expect(res.status).toBe(404);
   });
 
   test("name matching is case-insensitive", async () => {
     const mapRes = await request(app).get("/api/map");
-    const availableCabana = mapRes.body.cabanas.find((c) => c.available);
+    const availableCabana = mapRes.body.cabanas.find((c:CabanaWithStatus) => c.available);
     expect(availableCabana).toBeDefined();
 
     const res = await request(app).post("/api/book").send({

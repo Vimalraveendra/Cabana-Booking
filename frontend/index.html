@@ -61,7 +61,7 @@
     <!-- Modal -->
     <div class="modal" id="modal">
         <div class="modal__content">
-            <button class="modal__close" onclick="closeModal()">✕</button>
+            <button class="modal__close btn-close" id="modal-close">✕</button>
 
             <!-- Booking form (available cabana) -->
             <div class="modal__panel" id="modal-booking" style="display:none">
@@ -83,9 +83,9 @@
                             autocomplete="off" />
                     </div>
                 </form>
-                <button class="btn btn--primary" id="modal-booking-button" onclick="submitBooking()">Reserve This
+                <button class="btn btn--primary" id="modal-booking-button">Reserve This
                     Cabana</button>
-                <button class="btn btn--secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn--secondary btn-close">Cancel</button>
             </div>
 
             <!-- Unavailable -->
@@ -103,7 +103,7 @@
                     <div class="modal__card-value" id="modal-unavailable-room">—</div>
                 </div>
                 <div class="modal__divider"></div>
-                <button class="btn btn--secondary" onclick="closeModal()">← Back to Map</button>
+                <button class="btn btn--secondary btn-close">← Back to Map</button>
             </div>
 
             <!-- Confirmation -->
@@ -113,7 +113,7 @@
                 <div class="modal__title">Reservation Complete</div>
                 <div class="modal__divider"></div>
                 <div class="modal__detail" id="modal-confirm-detail">—</div>
-                <button class="btn btn--primary" onclick="closeModal()">← Back to Map</button>
+                <button class="btn btn--primary btn-close">← Back to Map</button>
             </div>
 
         </div>

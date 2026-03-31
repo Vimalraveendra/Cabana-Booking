@@ -180,7 +180,7 @@ async function submitBooking():Promise<void> {
     if (cell) {
       cell.classList.remove("cell--available");
       cell.classList.add("cell--booked", "cell--just-booked");
-      cell.title = `Booked — ${guestName} (Room ${roomNumber})`;
+      cell.title =`${cabanaLabel(selectedCabanaId!)} — Booked`;
     }
 
     // Update stats
@@ -418,4 +418,9 @@ window.addEventListener("DOMContentLoaded", async () => {
    setTimeout(() => loading.remove(), 500);
   }
 });
+
+document.querySelectorAll(".btn-close").forEach((btn) => {
+  btn.addEventListener("click", closeModal);
+});
+document.getElementById('modal-booking-button')?.addEventListener('click', submitBooking);
 

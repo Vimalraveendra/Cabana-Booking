@@ -59,7 +59,7 @@ testing and documentation.
 
 ---
 
-### Step 7 — Code Quality and Review
+### Step 6 — Code Quality and Review
 **Prompts:**
 - "BEM correctness"
 - "TypeScript best practices "
@@ -68,7 +68,7 @@ testing and documentation.
 
 ---
 
-### Step 8 — Documentation
+### Step 7 — Documentation
 **Prompts:**
 - "Summarize this feature in a professional way for README."
 - "Explain design decisions and trade-offs"

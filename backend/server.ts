@@ -15,7 +15,7 @@ import {
   MapResponse,
 } from './types';
 
-const createApp = (options:AppOptions = {}) => {
+export const createApp = (options:AppOptions = {}) => {
   const app = express();
   app.use(cors());
   app.use(express.json());
@@ -160,4 +160,3 @@ if (require.main === module) {
     console.log(`🌴 Cabana Booking Server running at http://localhost:${PORT}`);
   });
 }
-module.exports = { createApp };

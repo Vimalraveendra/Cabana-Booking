@@ -1,8 +1,10 @@
+import { CabanaWithStatus} from "../backend/types";
+
 // ── Cabana booking ──
 describe("Cabana click behavior", () => {
   test("opens booking form for available cabana", () => {
     let state = "idle";
-    const cabana = { id: "4-5", available: true, booking: null };
+    const cabana:CabanaWithStatus = { id: "4-5",row:4,col:5, available: true, booking: null };
     if (!cabana.available) {
       state = "unavailable";
     } else {
@@ -13,10 +15,12 @@ describe("Cabana click behavior", () => {
 
   test("booked cabana shows unavailable message", () => {
     let state = "idle";
-    const cabana = {
+    const cabana:CabanaWithStatus = {
       id: "4-5",
+      row:4,
+      col:5, 
       available: false,
-      booking: { guestName: "Alice Smith", roomNumber: "101" },
+      booking: { guestName: "Alice Smith", roomNumber: "101",bookedAt: new Date().toISOString() },
     };
     if (!cabana.available) {
       state = "unavailable";
@@ -27,8 +31,8 @@ describe("Cabana click behavior", () => {
   });
 
   test("reset clears selected cabana", () => {
-    let selectedCabanaId = "4-5";
-    selectedCabanaId = null;
+    let selectedCabanaId:string|null  = "4-5";
+    selectedCabanaId= null;
     expect(selectedCabanaId).toBeNull();
   });
 });
@@ -36,13 +40,13 @@ describe("Cabana click behavior", () => {
 // ── Map update after booking ──
 describe("Map updates after booking", () => {
   test("cabana marked as booked", () => {
-    const cabanas = [
-      { id: "4-5", available: true, booking: null },
-      { id: "4-10", available: true, booking: null },
+    const cabanas :CabanaWithStatus[]= [
+      { id: "4-5", row:4,col:5,available: true, booking: null },
+      { id: "4-10", row:4,col:10, available: true, booking: null },
     ];
 
     // booking
-    const cabana = cabanas.find((c) => c.id === "4-5");
+    const cabana:CabanaWithStatus= cabanas.find((c) => c.id === "4-5")!;
     cabana.available = false;
     cabana.booking = {
       guestName: "Bob Jones",
@@ -55,12 +59,12 @@ describe("Map updates after booking", () => {
   });
 
   test("other cabanas available after booking", () => {
-    const cabanas = [
-      { id: "4-5", available: true, booking: null },
-      { id: "4-10", available: true, booking: null },
+    const cabanas:CabanaWithStatus[] = [
+      { id: "4-5", row:4,col:5,available: true, booking: null },
+      { id: "4-10", row:4,col:10,available: true, booking: null },
     ];
-    cabanas.find((c) => c.id === "4-5").available = false;
-    expect(cabanas.find((c) => c.id === "4-10").available).toBe(true);
+    cabanas.find((c) => c.id === "4-5")!.available = false;
+    expect(cabanas.find((c) => c.id === "4-10")!.available).toBe(true);
   });
 });
 
@@ -94,22 +98,22 @@ describe("Booking form validation", () => {
 // ── Stats calculation ──
 describe("Stats update after booking", () => {
   test("cabana available count decreases after booking", () => {
-    const cabanas = [
-      { id: "a", available: true },
-      { id: "b", available: true },
-      { id: "c", available: false },
+    const cabanas :CabanaWithStatus[]= [
+      { id: "a",row:4,col:5, available: true,booking:null },
+      { id: "b",row:4,col:10, available: true,booking:null },
+      { id: "c",row:4,col:12, available: false,booking:null },
     ];
-    cabanas.find((c) => c.id === "a").available = false;
+    cabanas.find((c) => c.id === "a")!.available = false;
     const avail = cabanas.filter((c) => c.available).length;
     expect(avail).toBe(1);
   });
 
   test("cabana booked count increases after booking", () => {
-    const cabanas = [
-      { id: "a", available: true },
-      { id: "b", available: true },
+    const cabanas :CabanaWithStatus[]= [
+       { id: "a",row:4,col:5, available: true,booking:null },
+      { id: "b",row:4,col:10, available: true,booking:null },
     ];
-    cabanas.find((c) => c.id === "a").available = false;
+    cabanas.find((c) => c.id === "a")!.available = false;
     const booked = cabanas.filter((c) => !c.available).length;
     expect(booked).toBe(1);
   });
@@ -117,7 +121,7 @@ describe("Stats update after booking", () => {
 
 // ── Masking ──
 describe("Guest data masking", () => {
-  function maskData(name) {
+  function maskData(name:string) {
     return name
       .trim()
       .split(" ")

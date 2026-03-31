@@ -1,63 +1,135 @@
-# Resort Map — Code Test
+# 🌴 Soleil Palms — Cabana Booking
 
-*You are creating the world's first interactive cabana booking website for luxury resorts. Our goal is to offer guests a seamless digital experience: browse an interactive map of the resort, see poolside cabanas availability in real time, and book their ideal lounging spot just steps from the pool—all with just a couple of clicks. This project integrates a visually-rich resort map with live cabana availability and booking, redefining poolside convenience for our guests. Map format and asset usage are described below.*
 
----
+*An interactive cabana booking website for luxury resorts, allowing guests to browse a live resort map, view real-time poolside cabana availability, and book their preferred lounging spot in a seamless, single-flow digital experience.*
 
-## Task
 
-Build a webapp that displays the resort map and allows guests to book cabanas. The frontend should rely entirely on a RESTful API for all data.
 
-- **Backend:** Provides a RESTful API that serves all information needed to display the interactive, bookable resort map and to handle cabana bookings.
-- **Frontend:** Provides an interactive resort map and enables cabana booking.
+## Requirements
 
-  - **Resort Map View:**
-    - Displays a visual map of the resort using tiles from `assets`.
-    - Map layout and cabana availability are rendered based on the API response.
-    - Legend:
-      - `W` = cabana
-      - `p` = pool
-      - `#` = path
-      - `c` = chalet
-      - `.` = empty space
+- **Node.js** v18+
+  
+## Quick Start
 
-  - **Cabana Interaction:**
-    - When a guest clicks on a cabana (`W`):
-      - If the cabana is **available**, show a booking interface (1-step flow: prompt for room number and guest name). Show confirmation of booking and redirect back to map view.
-      - If the cabana is **unavailable**, display information that it's not available.
+```bash
+npm install
+npm start
+```
+Open **http://localhost:3000** in your browser.
 
-  - **Booking Feedback:**
-    - Once a cabana is booked, update the map immediately to show that it is no longer available (e.g., use a distinct visual style for booked cabanas).
+### Custom map and bookings files
 
-  - **Validation:** Booking is only allowed if room number and name match a current guest (validated via API using the bookings file).
+```bash
+npm start -- --map /path/to/map.ascii --bookings /path/to/bookings.json
+```
+Both arguments are optional — defaults to `map.ascii` and `bookings.json` in the project root.
 
-The backend reads map layout and booking/guest data from files specified via CLI options: `--map <path-to-map>` (for the ASCII resort map; defaults to `map.ascii` in the working directory) and `--bookings <path-to-bookings>` (for bookings and guest information; defaults to `bookings.json` in the working directory).
-Be sure to use the provided example map (`map.ascii`) and bookings (`bookings.json`) files as the required format for your input files.
 
-There is no need for persistent storage for cabana bookings—in-memory or session state on the backend is fine.
+## Running Tests
 
-No auth—assume that knowing room number and guest name is sufficient auth.
+```bash
+# All tests
+npm test
 
-The booking flow should end with a clear confirmation and the map visibly updated (booked cabana distinct). Errors (e.g. invalid room/name) should show a short, human-readable message.
+# Backend only
+npm run test:backend
+
+# Frontend only
+npm run test:frontend
+```
 
 ---
 
-## Deliverables
+## File Formats
 
-- **Source code** in a git repository (please provide a link and make sure we have permissions to view/download code).
-- **README:** Please ensure your README is well-structured, concise, and clearly documents how to run and use your app.
-Readme should containt a short paragraph explaining your core design decisions and any trade-offs (e.g. why you structured the API/UI as you did, what you kept simple or skipped).
-- **Single entrypoint:** Provide a **single command** (e.g. `./run.sh`, `npm run start`, or `dotnet run`) that launches both backend and frontend together, so reviewers need only run one command from the project root. This starting command **must accept** the `--map <path>` and `--bookings <path>` arguments so reviewers can specify alternative map or bookings files at startup.
-- **AI-assisted workflow documentation:** Please include your AI workflow in `AI.md`. Which tools you used, what kind of prompts and how many steps it took. This will not be judged, but a topic we would like to discuss during the interview.
-- **Screenshot:** Please include a screenshot (in your repository, e.g., `screenshot.png`) showing your running solution (map view).
-- **Automated Tests:** Include automated tests covering core backend and frontend functionality. Tests should validate booking logic, REST API behavior, map updates, and UI responses to typical user actions. Document how to run all tests in the README.
-- **LLM use:** If you use an LLM or coding agent (which we encourage), include the key prompts or agent setup you used. We may ask detailed questions about both the solution and how you used the tooling.
+### `map.ascii`
+
+Each character represents a map tile:
+
+| Character | Meaning |
+|---|---|
+| `W` | Cabana (bookable) |
+| `p` | Pool |
+| `#` | Path |
+| `c` | Chalet |
+| `.` | Empty space |
+
+### `bookings.json`
+```json
+{
+  "guests": [
+    { "roomNumber": "101", "name": "Alice Smith" }
+  ],
+}
+```
+- `guests` — registered guests used to validate booking requests
 
 ---
 
-## General notes
+## API
 
-- **Languages:** Use **.NET and/or JavaScript/TypeScript** only. Other languages are not in scope.
-- Keep it simple; avoid over-engineering. Within that stack, any reasonable libraries or frameworks are fine as long as they are documented.
-- No real auth or persistent storage required—in-memory/session state for cabana bookings is enough.
-- When in doubt, assume we had a simple solution in mind; feel free to ask questions.
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/map` | Full map grid and cabana availability |
+| `POST` | `/api/book` | Book a cabana |
+
+### `POST /api/book`
+
+**Request:**
+```json
+{
+  "cabanaId": "4-8",
+  "roomNumber": "101",
+  "guestName": "Alice Johnson"
+}
+```
+
+**Response codes:**
+
+| Code | Reason |
+|---|---|
+| `200` | Booked successfully |
+| `400` | Missing fields |
+| `401` | Guest not found |
+| `404` | Cabana not found |
+| `409` | Cabana already booked |
+
+---
+
+## Design Decisions
+
+> The API has two endpoints covering exactly what the spec requires —
+map rendering and cabana booking . The map endpoint
+returns the full grid and availability in one call so the frontend needs only one request to render.
+
+
+> **Single process.** Express serves both the REST API and static frontend files from one Node.js process —  Just `npm start`.
+
+> **In-memory state.** Cabana bookings are held in memory as the spec permits. This keeps the stack minimal with no database or migrations. 
+
+> **Modal over sidebar.** The booking flow uses a modal popup rather than a sidebar. This matches the spec's intent of "redirect back to map view" — the map stays fully visible behind the modal, and closing it returns the guest to the map view with the cabana visually updated.
+
+> **REST over WebSockets.** The map loads once on page load. After a successful booking the client updates its local state directly.
+
+> **TypeScript throughout.** Shared interfaces in `types.ts` enforce the API contract between backend and frontend. `tsx` runs the backend directly without a compile step; `esbuild` bundles the frontend.
+
+> **BEM CSS.** All styles follow BEM naming convention — blocks, elements and modifiers clearly separated. This avoids specificity conflicts and keeps the stylesheet easy to extend.
+
+> **Guest privacy.** Guest names and room numbers displayed in the unavailable modal are masked — `Alice Smith` becomes `***** *****` — to protect other guests' privacy.
+
+
+**Kept simple:**
+
+- **In-memory state** — no database needed, spec permitted this
+  
+- **No auth tokens** — room number and name is sufficient per spec
+- **No real-time sync** — single user session, no WebSockets needed
+- **No framework** — vanilla TypeScript is enough for this scope
+- **No pagination** — resort map is small enough to load in one request
+
+**Skipped:**
+- **Persistent storage** — spec said in-memory is fine
+  
+- **Per-guest booking limit** — spec did not require this
+- **Initial Cabana Booking** — spec did not require this
+- **Exhaustive unit tests** — focused on API behavior and key UI flows as spec requested
